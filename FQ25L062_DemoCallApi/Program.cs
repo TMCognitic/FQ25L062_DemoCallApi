@@ -106,7 +106,7 @@ using (HttpClient client = new HttpClient())
 
     //Après
     //HttpContent httpContent = JsonContent.Create(dino); //Serializer et préparer le contenu pour indiquer qu'il s'agit de JSON
-
+    ////Dans le cas du PUT c'est la méthode PutAsync et dans le cas du PATCH c'est la méthode PatchAsync
     //using (HttpResponseMessage responseMessage = client.PostAsync("https://localhost:7093/api/Dino/", httpContent).Result)
     //{
     //    if (responseMessage.IsSuccessStatusCode)
