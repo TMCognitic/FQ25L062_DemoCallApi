@@ -3,6 +3,7 @@
 
 using FQ25L062_DemoCallApi;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -49,36 +50,36 @@ using (HttpClient client = new HttpClient())
     //}
 
     int id = 1;
-    using (HttpResponseMessage responseMessage = client.GetAsync($"https://localhost:7093/api/Dino/{id}").Result)
-    {
+    //using (HttpResponseMessage responseMessage = client.GetAsync($"https://localhost:7093/api/Dino/{id}").Result)
+    //{
 
-        //responseMessage.EnsureSuccessStatusCode(); //Si Code 20x pas de soucis sinon Exception
+    //    //responseMessage.EnsureSuccessStatusCode(); //Si Code 20x pas de soucis sinon Exception
 
-        if (!responseMessage.IsSuccessStatusCode)
-        {
-            switch(responseMessage.StatusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                    Console.WriteLine("Il y a une erreur dans la requête!");
-                    break;
-                case HttpStatusCode.NotFound:
-                    Console.WriteLine($"Aucun dinosaure trouvé avec l'id => {id}");
-                    break;
-            }
+    //    if (!responseMessage.IsSuccessStatusCode)
+    //    {
+    //        switch(responseMessage.StatusCode)
+    //        {
+    //            case HttpStatusCode.BadRequest:
+    //                Console.WriteLine("Il y a une erreur dans la requête!");
+    //                break;
+    //            case HttpStatusCode.NotFound:
+    //                Console.WriteLine($"Aucun dinosaure trouvé avec l'id => {id}");
+    //                break;
+    //        }
 
-        }
-        else
-        {
-            string json = responseMessage.Content.ReadAsStringAsync().Result;
-            Console.WriteLine(json);
-            Dino? dino = JsonSerializer.Deserialize<Dino>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+    //    }
+    //    else
+    //    {
+    //        string json = responseMessage.Content.ReadAsStringAsync().Result;
+    //        Console.WriteLine(json);
+    //        Dino? dino = JsonSerializer.Deserialize<Dino>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
-            if (dino is not null)
-            {
-                Console.WriteLine(dino.Espece);
-            }
-        }
-    }
+    //        if (dino is not null)
+    //        {
+    //            Console.WriteLine(dino.Espece);
+    //        }
+    //    }
+    //}
 
     //try
     //{
@@ -93,6 +94,41 @@ using (HttpClient client = new HttpClient())
     //{
     //    Console.WriteLine(ex.Message);
     //}
-}
 
-//Call POST, PUT, PATCH un contenu sera attendu
+
+    //Call POST, PUT, PATCH un contenu sera attendu
+    Dino dino = new Dino("Michaelosaurus Maximum Decimus Général...", -110, 177);
+    //Méthode classique    
+    //Avant
+    //string json = JsonSerializer.Serialize(dino);
+    //HttpContent content = new StringContent(json);
+    //content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+    //Après
+    //HttpContent httpContent = JsonContent.Create(dino); //Serializer et préparer le contenu pour indiquer qu'il s'agit de JSON
+
+    //using (HttpResponseMessage responseMessage = client.PostAsync("https://localhost:7093/api/Dino/", httpContent).Result)
+    //{
+    //    if (responseMessage.IsSuccessStatusCode)
+    //    {
+    //        Console.WriteLine("Dinosaure créé!");
+    //    }
+    //    else
+    //    {
+    //        Console.WriteLine("Erreur lors de la création du dinosaure!");
+    //    }
+    //}
+
+    //Méthode simplifiée 
+    try
+    {
+        var response = client.PostAsJsonAsync("https://localhost:7093/api/Dino/", dino).Result;
+        response.EnsureSuccessStatusCode();
+        Console.WriteLine("Dinosaure créé!");
+    }
+    catch (Exception)
+    {
+        Console.WriteLine("Erreur lors de la création du dinosaure!");
+    }
+
+}
